@@ -111,9 +111,9 @@ void printf(char *fmt, ...) {
 
 void panic(char *s) {
   pr.locking = 0;
-  printf("panic: ");
+  printf("\x1b[31m[PANIC][CPU%d]:", cpuid());
   printf(s);
-  printf("\n");
+  printf("\x1b[0m\n");
   panicked = 1; // freeze uart output from other CPUs
   for (;;)
     ;

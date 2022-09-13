@@ -130,7 +130,7 @@ void runcmd(struct cmd *cmd) {
 }
 
 int getcmd(char *buf, int nbuf) {
-  write(2, "$ ", 2);
+  fprintf(2, "testuser@xv6-riscv ==> ");
   memset(buf, 0, nbuf);
   gets(buf, nbuf);
   if (buf[0] == 0) // EOF
@@ -157,6 +157,14 @@ int main(void) {
       buf[strlen(buf) - 1] = 0; // chop \n
       if (chdir(buf + 3) < 0)
         fprintf(2, "cannot cd %s\n", buf + 3);
+      continue;
+    }
+    if (buf[0] == 'e' && buf[1] == 'x' && buf[2] == 'i' && buf[3] == 't') {
+      exit(0);
+    }
+    if (buf[0] == 'c' && buf[1] == 'l' && buf[2] == 'e' && buf[3] == 'a' &&
+        buf[4] == 'r') {
+      printf("\x1b[2J\x1b[H");
       continue;
     }
     if (fork1() == 0)

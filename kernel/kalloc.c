@@ -73,3 +73,13 @@ void *kalloc(void) {
     memset((char *)r, 5, PGSIZE); // fill with junk
   return (void *)r;
 }
+
+uint64 sys_getmem(void) {
+  uint64 blocks = 0;
+  struct run *k = kmem.freelist;
+  while (k) {
+    blocks++;
+    k = k->next;
+  }
+  return blocks * PGSIZE;
+}
