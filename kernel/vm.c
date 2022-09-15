@@ -49,18 +49,24 @@ pagetable_t kvmmake(void) {
 }
 
 // Initialize the one kernel_pagetable
-void kvminit(void) { kernel_pagetable = kvmmake(); }
+void kvminit(void) {
+  syslog("Initing kernel pagetable...\n");
+  kernel_pagetable = kvmmake();
+  syslog("Pagetable: OK\n");
+}
 
 // Switch h/w page table register to the kernel's page table,
 // and enable paging.
 void kvminithart() {
   // wait for any previous writes to the page table memory to finish.
+  syslog("Initing kernel pagetable for hart %d...\n", cpuid());
   sfence_vma();
 
   w_satp(MAKE_SATP(kernel_pagetable));
 
   // flush stale entries from the TLB.
   sfence_vma();
+  syslog("Pagetable(hart %d): OK\n", cpuid());
 }
 
 // Return the address of the PTE in page table pagetable

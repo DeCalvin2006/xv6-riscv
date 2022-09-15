@@ -84,6 +84,18 @@ int pipewrite(struct pipe *, uint64, int);
 void printf(char *, ...);
 void panic(char *) __attribute__((noreturn));
 void printfinit(void);
+#define syslog(...)                                                            \
+  printf("\x1b[0m[LOG][CPU:%d]", cpuid());                                     \
+  printf(__VA_ARGS__);                                                         \
+  printf("\x1b[0m")
+#define syswarn(...)                                                           \
+  printf("\x1b[33m[WARNING][CPU:%d]", cpuid());                                \
+  printf(__VA_ARGS__);                                                         \
+  printf("\x1b[0m")
+#define syserr(...)                                                            \
+  printf("\x1b[31m[ERROR][CPU:%d]", cpuid());                                  \
+  printf(__VA_ARGS__);                                                         \
+  printf("\x1b[0m")
 
 // proc.c
 int cpuid(void);

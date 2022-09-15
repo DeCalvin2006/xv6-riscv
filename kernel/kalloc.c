@@ -25,8 +25,10 @@ struct {
 } kmem;
 
 void kinit() {
+  syslog("Initing kernel memory table...\n");
   initlock(&kmem.lock, "kmem");
   freerange(end, (void *)PHYSTOP);
+  syslog("Memory table OK.\n");
 }
 
 void freerange(void *pa_start, void *pa_end) {
@@ -55,6 +57,7 @@ void kfree(void *pa) {
   r->next = kmem.freelist;
   kmem.freelist = r;
   release(&kmem.lock);
+  /*syslog("Freed 4k bytes of memory.\n");*/
 }
 
 // Allocate one 4096-byte page of physical memory.
@@ -71,15 +74,22 @@ void *kalloc(void) {
 
   if (r)
     memset((char *)r, 5, PGSIZE); // fill with junk
+  /*syslog("Allocated 4k bytes of memory.\n");*/
   return (void *)r;
 }
 
+// ==NEW==
+// Returns the remaining memory in the free list in bytes.
+// Question:
+//      Need Lock?
 uint64 sys_getmem(void) {
+  acquire(&kmem.lock);
   uint64 blocks = 0;
   struct run *k = kmem.freelist;
   while (k) {
     blocks++;
     k = k->next;
   }
+  release(&kmem.lock);
   return blocks * PGSIZE;
 }

@@ -11,9 +11,9 @@ void main() {
   if (cpuid() == 0) {
     consoleinit();
     printfinit();
-    printf("\n");
-    printf("xv6 kernel is booting\n");
-    printf("\n");
+    syslog("\n");
+    syslog("xv6 kernel is booting\n");
+    syslog("\n");
     kinit();            // physical page allocator
     kvminit();          // create kernel page table
     kvminithart();      // turn on paging
